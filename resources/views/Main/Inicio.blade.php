@@ -27,7 +27,7 @@
         <input type="date" class="form-control" id="filtroFecha" placeholder="Filtrar por Fecha">
       </div>
     </div>
-
+  
     <!-- Tabla con los datos -->
     <table class="table table-bordered table-hover">
       <thead>

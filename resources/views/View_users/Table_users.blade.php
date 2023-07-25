@@ -8,10 +8,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tabla de Usuarios</title>
-  <!-- Enlace al archivo de estilos de Bootstrap -->
+  <!-- Enlace al archivo de estilos de Bootstrap 4.5.2 -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Enlace a la biblioteca de Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0-alpha1@5.1.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
   <div class="container mt-4">
@@ -30,85 +28,86 @@
           <th>Usuario</th>
           <th>Password</th>
           <th>Rol</th>
-          <th>Cambiar Rol</th>
           <th>Fecha de Modificación</th>
-          <th>Guardar</th> <!-- Nuevo campo para el botón de guardado -->
+          <th>Cambiar Rol</th> <!-- Nuevo campo para el botón de guardado -->
         </tr>
       </thead>
-      <tbody>
+      
+        @foreach ($datos as $item)
+            
         <tr>
-          <td>JuanPerez</td>
-          <td>********</td>
-          <td>Usuario</td>
+          <td>{{$item->user}}</td>
+          @php
+              $mostrar = $item->id ."||" . $item->roles . "||";
+              @endphp
+          <td>{{$item->user_password}}</td>
+          <td>{{$item->roles}}</td>
+          <td>{{$item->date_modification}}</td>
           <td>
-            <select class="form-control" onchange="cambiarRol(this)">
-              <option value="usuario">Usuario</option>
-              <option value="administrador">Administrador</option>
-              <option value="editor">Editor</option>
-            </select>
-          </td>
-          <td></td> <!-- Este es el campo para la fecha de modificación -->
-          <td>
-            <button type="button" class="btn btn-primary" onclick="guardarCambios(this)">
-              <span class="bi bi-check"></span> Guardar
+        
+            <button onclick="agregar('@php echo $mostrar; @endphp')" 
+            type="button" class="btn btn-primary" data-toggle="modal" data-target="#miModal">
+              <span class="bi bi-check"></span> Cambiar Rol
             </button>
           </td>
         </tr>
-        <!-- Puedes agregar más filas de usuarios aquí -->
-      </tbody>
+        @endforeach
+        
     </table>
+ 
   </div>
+ 
+
+<!-- Contenido del modal -->
+<form action="{{ route('capturar') }}" method="POST">
+  @csrf
+  
+  @method('PUT')
+<div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="miModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="miModalLabel">Guardar Cambios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Deseas guardar los cambios?</p>
+        <!-- Puedes agregar aquí cualquier contenido adicional que desees mostrar en el modal -->
+        <input type="hidden" name="ID" value="ID" id = "ID">
+        <select class="form-control" name="newRol" id="Roles">
+          <option value="Administrador">Administrador</option>
+          <option value="Programador">Programador</option>
+          <option value="Soporte">Soporte</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
 
   <!-- Enlace al archivo de scripts de Bootstrap y jQuery (necesario para el filtro) -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <script>
-    // Función para filtrar usuarios
-    $(document).ready(function () {
-      $("#filtroUsuarios").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        $("table tbody tr").filter(function () {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-    });
-
-    // Función para cambiar el rol de usuario
-    function cambiarRol(selectElement) {
-      var nuevoRol = selectElement.value;
-      var fechaModificacion = new Date().toLocaleString(); // Obtenemos la fecha actual
-      var row = selectElement.parentNode.parentNode; // Obtenemos la fila actual
-
-      // Actualizamos el valor del rol y la fecha de modificación en la tabla
-      row.cells[2].innerText = nuevoRol;
-      row.cells[4].innerText = fechaModificacion;
-
-      // Aquí puedes realizar una llamada AJAX para guardar los cambios en la base de datos,
-      // incluyendo la fecha de modificación, o realizar cualquier otra lógica necesaria.
-
-      console.log("Nuevo rol seleccionado: " + nuevoRol);
-      console.log("Fecha de modificación: " + fechaModificacion);
-    }
-
-    // Función para guardar los cambios en la tabla
-    function guardarCambios(buttonElement) {
-      var row = buttonElement.parentNode.parentNode; // Obtenemos la fila actual
-      var usuario = row.cells[0].innerText;
-      var password = row.cells[1].innerText;
-      var rol = row.cells[2].innerText;
-      var fechaModificacion = row.cells[4].innerText;
-
-      // Aquí puedes realizar una llamada AJAX para enviar los datos al servidor y guardarlos en la base de datos.
-      console.log("Usuario: " + usuario);
-      console.log("Password: " + password);
-      console.log("Rol: " + rol);
-      console.log("Fecha de modificación: " + fechaModificacion);
-    }
-  </script>
+  <script> 
+  function agregar(dato){
+    console.log(dato)
+    valores = dato.split('||');
+    $('#ID').val(valores[0]);
+    $('#Roles').val(valores[1]);
+   
+   }
+   </script>
 </body>
 </html>
+
 
 
 @endsection
