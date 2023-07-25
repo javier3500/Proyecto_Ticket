@@ -1,6 +1,6 @@
 - primero cree la base de datos le dejare el archivo en esta carpeta
 - realiza la migracion hacia la base de datos
 
-en sqlrv
+en sqlrv y mysql
 CREATE DATABASE bd_ticket;
 
